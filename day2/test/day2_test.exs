@@ -8,5 +8,12 @@ defmodule Day2Test do
              ?b => 2,
              ?c => 3
            }
+
+    assert Day2.count_characters("éaabbcécc") == %{
+             ?a => 2,
+             ?b => 2,
+             ?c => 3,
+             ?é => 2
+           }
   end
 end
