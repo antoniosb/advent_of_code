@@ -6,13 +6,13 @@ defmodule Day1 do
       integer
     end)
     |> Stream.cycle()
-    |> Enum.reduce_while({0, []}, fn x, {current_freq, seen_freq} ->
+    |> Enum.reduce_while({0, MapSet.new([0])}, fn x, {current_freq, seen_freq} ->
       new_freq = current_freq + x
 
       if new_freq in seen_freq do
         {:halt, new_freq}
       else
-        {:cont, {new_freq, [new_freq | seen_freq]}}
+        {:cont, {new_freq, MapSet.put(seen_freq, new_freq)}}
       end
     end)
   end
