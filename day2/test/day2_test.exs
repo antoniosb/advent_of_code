@@ -16,4 +16,16 @@ defmodule Day2Test do
              ?é => 2
            }
   end
+
+  test "checksum" do
+    assert Day2.checksum([
+             "abcdef",
+             "bababc",
+             "abbcde",
+             "abcccd",
+             "aabcdd",
+             "abcdee",
+             "ababab"
+           ]) == 12
+  end
 end
