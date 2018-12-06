@@ -1,8 +1,8 @@
 defmodule Day1 do
   def final_frequency(input) do
     input
-    |> String.split("\n", trim: true)
-    |> Enum.map(fn line -> String.to_integer(line) end)
+    |> String.splitter("\n", trim: true)
+    |> Stream.map(fn line -> String.to_integer(line) end)
     |> Enum.sum()
   end
 end
