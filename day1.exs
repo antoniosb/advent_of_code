@@ -19,11 +19,14 @@ case System.argv() do
       import Day1
 
       test "final frequency" do
-        assert final_frequency("""
-               +1
-               +1
-               +1
-               """) == 3
+        {:ok, io} =
+          StringIO.open("""
+          +1
+          +1
+          +1
+          """)
+
+        assert final_frequency(IO.stream(io, :line)) == 3
       end
     end
 
