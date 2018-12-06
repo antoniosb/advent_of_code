@@ -1,8 +1,10 @@
 defmodule Day1 do
-  def final_frequency(input) do
-    input
-    |> String.splitter("\n", trim: true)
-    |> Stream.map(fn line -> String.to_integer(line) end)
+  def final_frequency(file_stream) do
+    file_stream
+    |> Stream.map(fn line ->
+      {integer, _leftover} = Integer.parse(line)
+      integer
+    end)
     |> Enum.sum()
   end
 end
@@ -27,7 +29,7 @@ case System.argv() do
 
   [input_file] ->
     input_file
-    |> File.read!()
+    |> File.stream!([], :line)
     |> Day1.final_frequency()
     |> IO.puts()
 
