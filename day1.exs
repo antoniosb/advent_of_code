@@ -2,16 +2,8 @@ defmodule Day1 do
   def final_frequency(input) do
     input
     |> String.split("\n", trim: true)
-    |> sum_lines(_current_frequency = 0)
-  end
-
-  defp sum_lines([], current_frequency) do
-    current_frequency
-  end
-
-  defp sum_lines([line | lines], current_frequency) do
-    new_frequency = String.to_integer(line) + current_frequency
-    sum_lines(lines, new_frequency)
+    |> Enum.map(fn line -> String.to_integer(line) end)
+    |> Enum.sum()
   end
 end
 
