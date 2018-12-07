@@ -6,22 +6,22 @@ defmodule Day2 do
   end
 
   def closest_charlists([head | tail]) do
-    if closest = Enum.find(tail, &one_char_difference?(&1, head)) do
-      head
-      |> Enum.zip(closest)
-      |> Enum.filter(fn {cp1, cp2} -> cp1 == cp2 end)
-      |> Enum.map(fn {cp, _} -> cp end)
-      |> List.to_string()
-    else
-      closest_charlists(tail)
-    end
+    Enum.find_value(tail, &one_char_difference(&1, head)) || closest_charlists(tail)
   end
 
-  defp one_char_difference?(charlist1, charlist2) do
+  defp one_char_difference(charlist1, charlist2) do
     charlist1
     |> Enum.zip(charlist2)
-    |> Enum.count(fn {cp1, cp2} -> cp1 != cp2 end)
-    |> Kernel.==(1)
+    |> Enum.split_with(fn {cp1, cp2} -> cp1 == cp2 end)
+    |> case do
+      {tuples_of_codepoints, [_]} ->
+        tuples_of_codepoints
+        |> Enum.map(fn {cp, _} -> cp end)
+        |> List.to_string()
+
+      {_, _} ->
+        nil
+    end
   end
 
   def checksum(list) when is_list(list) do
