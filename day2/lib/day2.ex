@@ -1,24 +1,23 @@
 defmodule Day2 do
-  def closest([head | tail]) do
-    if closest = Enum.find(tail, &one_char_difference?(&1, head)) do
-      # common_prefix_and_suffix()
-      charlist1 = String.to_charlist(head)
-      charlist2 = String.to_charlist(closest)
+  def closest(list) when is_list(list) do
+    list
+    |> Enum.map(&String.to_charlist/1)
+    |> closest_charlists()
+  end
 
-      charlist1
-      |> Enum.zip(charlist2)
+  def closest_charlists([head | tail]) do
+    if closest = Enum.find(tail, &one_char_difference?(&1, head)) do
+      head
+      |> Enum.zip(closest)
       |> Enum.filter(fn {cp1, cp2} -> cp1 == cp2 end)
       |> Enum.map(fn {cp, _} -> cp end)
       |> List.to_string()
     else
-      closest(tail)
+      closest_charlists(tail)
     end
   end
 
-  defp one_char_difference?(string1, string2) do
-    charlist1 = String.to_charlist(string1)
-    charlist2 = String.to_charlist(string2)
-
+  defp one_char_difference?(charlist1, charlist2) do
     charlist1
     |> Enum.zip(charlist2)
     |> Enum.count(fn {cp1, cp2} -> cp1 != cp2 end)
