@@ -23,13 +23,15 @@ defmodule Day3 do
 
   ## Examples:
 
-    iex> claimed = Day3.claimed_inches([
-    ...>  "#1 @ 1,3: 4x4",
-    ...>  "#2 @ 3,1: 4x4",
-    ...>  "#3 @ 5,5: 2x2",
-    ...> ])
-    iex> claimed[{4,2}]
-    [2]
+  iex> claimed = Day3.claimed_inches([
+  ...>  "#1 @ 1,3: 4x4",
+  ...>  "#2 @ 3,1: 4x4",
+  ...>  "#3 @ 5,5: 2x2",
+  ...> ])
+  iex> claimed[{4,2}]
+  [2]
+  iex> claimed[{4,4}]
+  [2, 1]
 
   """
   @spec claimed_inches([claim]) :: %{coordinate => [id]}
@@ -43,5 +45,22 @@ defmodule Day3 do
         end)
       end)
     end)
+  end
+
+  @doc """
+  Retrieves overlapped inches.
+
+  ## Examples:
+
+    iex> Day3.overlapped_inches([
+    ...>  "#1 @ 1,3: 4x4",
+    ...>  "#2 @ 3,1: 4x4",
+    ...>  "#3 @ 5,5: 2x2",
+    ...> ]) |> Enum.sort()
+    [{4,4}, {4,5}, {5,4}, {5,5}]
+  """
+  @spec overlapped_inches([claim]) :: [coordinate]
+  def overlapped_inches(claims) do
+    for {coordinate, [_, _ | _]} <- claimed_inches(claims), do: coordinate
   end
 end
