@@ -63,4 +63,40 @@ defmodule Day3 do
   def overlapped_inches(claims) do
     for {coordinate, [_, _ | _]} <- claimed_inches(claims), do: coordinate
   end
+
+  @doc """
+    Find non overlapping claim
+
+    ## Examples:
+
+      iex> Day3.non_overlapping_claim([
+      ...>  "#1 @ 1,3: 4x4",
+      ...>  "#2 @ 3,1: 4x4",
+      ...>  "#3 @ 5,5: 2x2",
+      ...> ])
+      3
+  """
+  def non_overlapping_claim(claims) do
+    parsed_claims = Enum.map(claims, &parse_claim/1)
+
+    overlapped_claims =
+      Enum.reduce(parsed_claims, %{}, fn [id, left, top, width, height], acc ->
+        Enum.reduce((left + 1)..(left + width), acc, fn x, acc ->
+          Enum.reduce((top + 1)..(top + height), acc, fn y, acc ->
+            Map.update(acc, {x, y}, [id], &[id | &1])
+          end)
+        end)
+      end)
+
+    [id, _, _, _, _] =
+      Enum.find(parsed_claims, fn [id, left, top, width, height] ->
+        Enum.all?((left + 1)..(left + width), fn x ->
+          Enum.all?((top + 1)..(top + height), fn y ->
+            Map.get(overlapped_claims, {x, y}) == [id]
+          end)
+        end)
+      end)
+
+    id
+  end
 end
