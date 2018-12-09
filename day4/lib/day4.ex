@@ -7,6 +7,16 @@ defmodule Day4 do
     {{year, month, day}, hour, minute, id}
   end
 
+  guard_command =
+    ignore(string("Guard #"))
+    |> integer(min: 1)
+    |> ignore(string(" begins shift"))
+    |> unwrap_and_tag(:shift)
+
+  sleep_command = string("falls asleep") |> replace(:down)
+
+  wakeup_command = string("wakes up") |> replace(:up)
+
   defparsecp(
     :parsec_log,
     ignore(string("["))
@@ -21,9 +31,9 @@ defmodule Day4 do
     |> integer(2)
     |> ignore(string("] "))
     |> choice([
-      ignore(string("Guard #")) |> integer(min: 1) |> ignore(string(" begins shift")),
-      string("falls asleep") |> replace(:down),
-      string("wakes up") |> replace(:up)
+      guard_command,
+      sleep_command,
+      wakeup_command
     ])
   )
 end

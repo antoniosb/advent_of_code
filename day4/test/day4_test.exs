@@ -4,7 +4,7 @@ defmodule Day4Test do
 
   test "parses the input" do
     assert Day4.parse_log("[1518-11-01 00:00] Guard #10 begins shift") ==
-             {{1518, 11, 01}, 00, 00, 10}
+             {{1518, 11, 01}, 00, 00, {:shift, 10}}
 
     assert Day4.parse_log("[1518-11-01 00:05] falls asleep") == {{1518, 11, 01}, 00, 05, :down}
 
