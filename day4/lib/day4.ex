@@ -1,3 +1,32 @@
+defmodule FrequencyMap do
+  defstruct data: %{}
+
+  def new do
+    %FrequencyMap{}
+  end
+
+  def most_frequent(%FrequencyMap{data: data}) do
+    {key, _} =
+      Enum.max_by(data, fn {_, count} ->
+        count
+      end)
+
+    key
+  end
+
+  defimpl Collectable do
+    def into(%FrequencyMap{data: data}) do
+      collector_fun = fn
+        data, {:cont, elem} -> Map.update(data, elem, 1, &(&1 + 1))
+        data, :done -> %FrequencyMap{data: data}
+        _data, :halt -> :ok
+      end
+
+      {data, collector_fun}
+    end
+  end
+end
+
 defmodule Day4 do
   import NimbleParsec
 
@@ -81,15 +110,13 @@ defmodule Day4 do
   end
 
   def minute_asleep_the_most_by_id(list, id) do
-    all_minutes = for {^id, _, ranges} <- list, range <- ranges, minute <- range, do: minute
+    frequency_map =
+      for {^id, _, ranges} <- list,
+          range <- ranges,
+          minute <- range,
+          do: minute,
+          into: FrequencyMap.new()
 
-    minutes_occurrences =
-      Enum.reduce(all_minutes, %{}, fn minute, acc ->
-        Map.update(acc, minute, 1, &(&1 + 1))
-      end)
-
-    {minute, _} = Enum.max_by(minutes_occurrences, fn {_, count} -> count end)
-
-    minute
+    FrequencyMap.most_frequent(frequency_map)
   end
 end
