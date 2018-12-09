@@ -119,4 +119,21 @@ defmodule Day4 do
 
     FrequencyMap.most_frequent(frequency_map)
   end
+
+  def part_one(input) do
+    grouped_entries =
+      input
+      |> File.read!()
+      |> String.split("\n", trim: true)
+      |> group_by_id_and_date()
+
+    id_asleep_the_most =
+      grouped_entries
+      |> sum_asleep_times_by_id()
+      |> id_asleep_the_most
+
+    minute_asleep_the_most = minute_asleep_the_most_by_id(grouped_entries, id_asleep_the_most)
+
+    id_asleep_the_most * minute_asleep_the_most
+  end
 end

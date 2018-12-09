@@ -66,7 +66,7 @@ defmodule Day4Test do
     assert Day4.id_asleep_the_most(input) == 10
   end
 
-  test "" do
+  test "returns the minute most frequent on the ranges of the given id" do
     input = [
       {10, {1518, 11, 1}, [5..24, 30..54]},
       {99, {1518, 11, 1}, [40..49]},
