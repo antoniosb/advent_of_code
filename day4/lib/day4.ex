@@ -1,12 +1,6 @@
 defmodule Day4 do
   import NimbleParsec
 
-  def parse_log(input) when is_binary(input) do
-    {:ok, [year, month, day, hour, minute, id], "", _, _, _} = parsec_log(input)
-
-    {{year, month, day}, hour, minute, id}
-  end
-
   guard_command =
     ignore(string("Guard #"))
     |> integer(min: 1)
@@ -36,4 +30,37 @@ defmodule Day4 do
       wakeup_command
     ])
   )
+
+  def parse_log(input) when is_binary(input) do
+    {:ok, [year, month, day, hour, minute, id], "", _, _, _} = parsec_log(input)
+
+    {{year, month, day}, hour, minute, id}
+  end
+
+  def group_by_id_and_date(unsorted_logs_as_strings) do
+    unsorted_logs_as_strings
+    |> Enum.map(&parse_log/1)
+    |> Enum.sort()
+    |> group_by_id_and_date([])
+  end
+
+  defp group_by_id_and_date([{date, _hour, _minute, {:shift, id}} | rest], groups) do
+    {rest, ranges} = get_asleep_ranges(rest, [])
+    group_by_id_and_date(rest, [{id, date, ranges} | groups])
+  end
+
+  defp group_by_id_and_date([], groups) do
+    Enum.reverse(groups)
+  end
+
+  defp get_asleep_ranges(
+         [{_, _, down_minute, :down}, {_, _, up_minute, :up} | rest],
+         ranges
+       ) do
+    get_asleep_ranges(rest, [down_minute..(-1 + up_minute) | ranges])
+  end
+
+  defp get_asleep_ranges(rest, ranges) do
+    {rest, Enum.reverse(ranges)}
+  end
 end
