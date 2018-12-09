@@ -11,7 +11,7 @@ defmodule Day4Test do
     assert Day4.parse_log("[1518-11-01 00:25] wakes up") == {{1518, 11, 01}, 00, 25, :up}
   end
 
-  test "groups input by id and date" do
+  test "groups input by id and sleeping hour" do
     input = [
       "[1518-11-04 00:46] wakes up",
       "[1518-11-01 00:55] wakes up",
@@ -32,13 +32,13 @@ defmodule Day4Test do
       "[1518-11-05 00:45] falls asleep"
     ]
 
-    assert Day4.group_by_id_and_date(input) ==
+    assert Day4.group_by_id_and_date_with_sleeping_hours(input) ==
              [
-               {10, {1518, 11, 1}, [5..24, 30..54]},
-               {99, {1518, 11, 1}, [40..49]},
-               {10, {1518, 11, 3}, [24..28]},
-               {99, {1518, 11, 4}, [36..45]},
-               {99, {1518, 11, 5}, [45..54]}
+               {10, {1518, 11, 1}, 45},
+               {99, {1518, 11, 1}, 10},
+               {10, {1518, 11, 3}, 5},
+               {99, {1518, 11, 4}, 10},
+               {99, {1518, 11, 5}, 10}
              ]
   end
 end
