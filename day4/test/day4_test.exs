@@ -91,9 +91,6 @@ defmodule Day4Test do
       {99, {1518, 11, 5}, [45..54]}
     ]
 
-    assert Day4.minutes_asleep_the_most(input) == %{
-             10 => {24, 2},
-             99 => {45, 3}
-           }
+    assert Day4.minutes_asleep_the_most(input) == {99, 45}
   end
 end

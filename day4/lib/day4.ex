@@ -109,18 +109,36 @@ defmodule Day4 do
   end
 
   def minutes_asleep_the_most(grouped_entries) do
-    Enum.reduce(grouped_entries, %{}, fn {id, _, _}, acc ->
-      case acc do
-        %{^id => _} ->
-          acc
+    {current_id, current_minute, _, _} =
+      Enum.reduce(grouped_entries, {0, 0, 0, MapSet.new()}, fn {id, _, _}, acc ->
+        {current_id, current_minute, current_count, seen_ids} = acc
 
-        %{} ->
+        # with false <- id in seen_ids,
+        #      {minute, count} when count > current_count <-
+        #        minute_asleep_the_most_by_id(grouped_entries, id) do
+        #   {id, minute, count, MapSet.put(seen_ids, id)}
+        # else
+        #   _ ->
+        #     {current_id, current_minute, current_count, MapSet.put(seen_ids, id)}
+        # end
+
+        if(id in seen_ids) do
+          acc
+        else
           case(minute_asleep_the_most_by_id(grouped_entries, id)) do
-            :error -> acc
-            pair -> Map.put(acc, id, pair)
+            :error ->
+              {current_id, current_minute, current_count, MapSet.put(seen_ids, id)}
+
+            {minute, count} when count > current_count ->
+              {id, minute, count, MapSet.put(seen_ids, id)}
+
+            _ ->
+              {current_id, current_minute, current_count, MapSet.put(seen_ids, id)}
           end
-      end
-    end)
+        end
+      end)
+
+    {current_id, current_minute}
   end
 
   def minute_asleep_the_most_by_id(grouped_entries, id) do
@@ -157,11 +175,10 @@ defmodule Day4 do
     Entry point for part two.
   """
   def part_two(input) do
-    {id, {minute, _}} =
+    {id, minute} =
       input
       |> group_by_id_and_date_on_input()
       |> minutes_asleep_the_most()
-      |> Enum.max_by(fn {_, {_, count}} -> count end)
 
     id * minute
   end
