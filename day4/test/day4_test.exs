@@ -75,6 +75,25 @@ defmodule Day4Test do
       {99, {1518, 11, 5}, [45..54]}
     ]
 
-    assert Day4.minute_asleep_the_most_by_id(input, 10) == 24
+    assert Day4.minute_asleep_the_most_by_id(input, 10) == {24, 2}
+
+    input = [{10, {1518, 11, 1}, []}]
+
+    assert Day4.minute_asleep_the_most_by_id(input, 10) == :error
+  end
+
+  test "returns a map with minutes asleep the most and its frequencies by id" do
+    input = [
+      {10, {1518, 11, 1}, [5..24, 30..54]},
+      {99, {1518, 11, 1}, [40..49]},
+      {10, {1518, 11, 3}, [24..28]},
+      {99, {1518, 11, 4}, [36..45]},
+      {99, {1518, 11, 5}, [45..54]}
+    ]
+
+    assert Day4.minutes_asleep_the_most(input) == %{
+             10 => {24, 2},
+             99 => {45, 3}
+           }
   end
 end

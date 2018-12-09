@@ -6,12 +6,11 @@ defmodule FrequencyMap do
   end
 
   def most_frequent(%FrequencyMap{data: data}) do
-    {key, _} =
-      Enum.max_by(data, fn {_, count} ->
-        count
-      end)
-
-    key
+    if data != %{} do
+      Enum.max_by(data, fn {_, count} -> count end)
+    else
+      :error
+    end
   end
 
   defimpl Collectable do
@@ -109,9 +108,24 @@ defmodule Day4 do
     id
   end
 
-  def minute_asleep_the_most_by_id(list, id) do
+  def minutes_asleep_the_most(grouped_entries) do
+    Enum.reduce(grouped_entries, %{}, fn {id, _, _}, acc ->
+      case acc do
+        %{^id => _} ->
+          acc
+
+        %{} ->
+          case(minute_asleep_the_most_by_id(grouped_entries, id)) do
+            :error -> acc
+            pair -> Map.put(acc, id, pair)
+          end
+      end
+    end)
+  end
+
+  def minute_asleep_the_most_by_id(grouped_entries, id) do
     frequency_map =
-      for {^id, _, ranges} <- list,
+      for {^id, _, ranges} <- grouped_entries,
           range <- ranges,
           minute <- range,
           do: minute,
@@ -120,20 +134,42 @@ defmodule Day4 do
     FrequencyMap.most_frequent(frequency_map)
   end
 
+  @doc """
+    Entry point for part one.
+  """
   def part_one(input) do
     grouped_entries =
       input
-      |> File.read!()
-      |> String.split("\n", trim: true)
-      |> group_by_id_and_date()
+      |> group_by_id_and_date_on_input
 
     id_asleep_the_most =
       grouped_entries
       |> sum_asleep_times_by_id()
       |> id_asleep_the_most
 
-    minute_asleep_the_most = minute_asleep_the_most_by_id(grouped_entries, id_asleep_the_most)
+    {minute_asleep_the_most, _} =
+      minute_asleep_the_most_by_id(grouped_entries, id_asleep_the_most)
 
     id_asleep_the_most * minute_asleep_the_most
+  end
+
+  @doc """
+    Entry point for part two.
+  """
+  def part_two(input) do
+    {id, {minute, _}} =
+      input
+      |> group_by_id_and_date_on_input()
+      |> minutes_asleep_the_most()
+      |> Enum.max_by(fn {_, {_, count}} -> count end)
+
+    id * minute
+  end
+
+  defp group_by_id_and_date_on_input(input) do
+    input
+    |> File.read!()
+    |> String.split("\n", trim: true)
+    |> group_by_id_and_date()
   end
 end
