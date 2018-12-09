@@ -70,4 +70,26 @@ defmodule Day4 do
       Map.update(acc, id, time_asleep, &(&1 + time_asleep))
     end)
   end
+
+  def id_asleep_the_most(map) do
+    {id, _} =
+      Enum.max_by(map, fn {_, time_asleep} ->
+        time_asleep
+      end)
+
+    id
+  end
+
+  def minute_asleep_the_most_by_id(list, id) do
+    all_minutes = for {^id, _, ranges} <- list, range <- ranges, minute <- range, do: minute
+
+    minutes_occurrences =
+      Enum.reduce(all_minutes, %{}, fn minute, acc ->
+        Map.update(acc, minute, 1, &(&1 + 1))
+      end)
+
+    {minute, _} = Enum.max_by(minutes_occurrences, fn {_, count} -> count end)
+
+    minute
+  end
 end

@@ -56,4 +56,25 @@ defmodule Day4Test do
              99 => 30
            }
   end
+
+  test "returns the id of with the max value asleep" do
+    input = %{
+      10 => 50,
+      99 => 30
+    }
+
+    assert Day4.id_asleep_the_most(input) == 10
+  end
+
+  test "" do
+    input = [
+      {10, {1518, 11, 1}, [5..24, 30..54]},
+      {99, {1518, 11, 1}, [40..49]},
+      {10, {1518, 11, 3}, [24..28]},
+      {99, {1518, 11, 4}, [36..45]},
+      {99, {1518, 11, 5}, [45..54]}
+    ]
+
+    assert Day4.minute_asleep_the_most_by_id(input, 10) == 24
+  end
 end
