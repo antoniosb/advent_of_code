@@ -37,30 +37,37 @@ defmodule Day4 do
     {{year, month, day}, hour, minute, id}
   end
 
-  def group_by_id_and_date_with_sleeping_hours(unsorted_logs_as_strings) do
+  def group_by_id_and_date(unsorted_logs_as_strings) do
     unsorted_logs_as_strings
     |> Enum.map(&parse_log/1)
     |> Enum.sort()
-    |> compute_sleeping_hours([])
+    |> group_by_id_and_date([])
   end
 
-  defp compute_sleeping_hours([{date, _hour, _minute, {:shift, id}} | rest], groups) do
-    {rest, ranges} = get_asleep_time(rest, 0)
-    compute_sleeping_hours(rest, [{id, date, ranges} | groups])
+  defp group_by_id_and_date([{date, _hour, _minute, {:shift, id}} | rest], groups) do
+    {rest, ranges} = get_asleep_ranges(rest, [])
+    group_by_id_and_date(rest, [{id, date, ranges} | groups])
   end
 
-  defp compute_sleeping_hours([], groups) do
+  defp group_by_id_and_date([], groups) do
     Enum.reverse(groups)
   end
 
-  defp get_asleep_time(
+  defp get_asleep_ranges(
          [{_, _, down_minute, :down}, {_, _, up_minute, :up} | rest],
-         asleep
+         ranges
        ) do
-    get_asleep_time(rest, asleep + (up_minute - down_minute))
+    get_asleep_ranges(rest, [down_minute..(-1 + up_minute) | ranges])
   end
 
-  defp get_asleep_time(rest, asleep) do
-    {rest, asleep}
+  defp get_asleep_ranges(rest, ranges) do
+    {rest, Enum.reverse(ranges)}
+  end
+
+  def sum_asleep_times_by_id(grouped_entries) do
+    Enum.reduce(grouped_entries, %{}, fn {id, _date, ranges}, acc ->
+      time_asleep = ranges |> Enum.map(&Enum.count/1) |> Enum.sum()
+      Map.update(acc, id, time_asleep, &(&1 + time_asleep))
+    end)
   end
 end
