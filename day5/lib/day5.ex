@@ -40,11 +40,11 @@ defmodule Day5 do
       {?C, 4}
   """
   def find_problematic_unit(polymer) do
-    letter_and_length =
-      for letter <- ?A..?Z do
-        {letter, byte_size(react_and_discard(polymer, letter, letter + 32))}
-      end
-
-    Enum.min_by(letter_and_length, &elem(&1, 1))
+    ?A..?Z
+    |> Task.async_stream(fn letter ->
+      {letter, byte_size(react_and_discard(polymer, letter, letter + 32))}
+    end)
+    |> Stream.map(fn {:ok, res} -> res end)
+    |> Enum.min_by(&elem(&1, 1))
   end
 end
