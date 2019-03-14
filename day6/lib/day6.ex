@@ -137,33 +137,35 @@ defmodule Day6 do
   @doc """
   Builds a sum grid.
 
-    iex> Day6.points_within_maximum_total_distance([
+    iex> Day6.area_within_maximum_total_distance([
     ...>  {1, 1},
     ...>  {1, 6},
     ...>  {8, 3},
     ...>  {3, 4},
     ...>  {5, 5},
     ...>  {8, 9}
-    ...> ], 32) |> length
+    ...> ], 32)
     16
   """
-  def points_within_maximum_total_distance(coordinates, max_distance) do
+  def area_within_maximum_total_distance(coordinates, max_distance) do
     {x_range, y_range} = bounding_box(coordinates)
 
-    for x <- x_range,
-        y <- y_range,
-        point = {x, y},
-        sum_distances(coordinates, point) < max_distance,
-        do: point
+    x_range
+    |> Task.async_stream(
+      fn x ->
+        Enum.reduce(y_range, 0, fn y, count ->
+          point = {x, y}
+          if sum_distances(coordinates, point) < max_distance, do: count + 1, else: count
+        end)
+      end,
+      ordered: false
+    )
+    |> Enum.reduce(0, fn {:ok, count}, acc -> count + acc end)
   end
 
   defp sum_distances(coordinates, point) do
     coordinates
     |> Enum.map(&manhattan_distance(&1, point))
     |> Enum.sum()
-  end
-
-  def region_size_with_maximum_distance(coordinates, max_distance) do
-    {x_range, y_range} = bounding_box(coordinates)
   end
 end
